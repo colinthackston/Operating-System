@@ -1,0 +1,14 @@
+#include <xinu.h>
+
+syscall test_and_set(mutex_t *lock) {
+  if (lock == NULL){
+    return SYSERR;
+  }
+  intmask mask; //
+  mask = disable(); //interrupts disabled
+  mutex_t prev; // 
+  prev = *lock; //grab the last value of lock
+  *lock = 1; //lock is being held if lock = 1, that's our assumption.
+  restore(mask); //
+  return(prev); //
+}

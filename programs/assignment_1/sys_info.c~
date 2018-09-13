@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <string.h>
+#include <sys/types.h>
+#include <stdlib.h>
+#include <unistd.h>
+#define MAX 240
+
+int main(int argc, const char *argv[]){
+  
+  int fd[2]; //creating the pipe between processes
+  int val=0;
+  char location[120]="/bin/";
+  char buf[MAX];
+  char cmd[120];
+  pipe(fd);
+  
+  pid_t pid;
+  pid = fork();
+  
+  if (pid < 0){ //forking process failed
+    fprintf(stderr, "fork failed\n");
+    exit(-1);
+  }
+  
+  else if (pid == 0){ //child process
+    printf("I am the child\n");
+    printf("Process ID: %d\n", getppid());
+    close(fd[1]);
+    int n; //counter var
+    while((n=read(fd[0], buf, sizeof(buf)) > 0) {
+	write(STDOUT_FILENO, buf, n);
+      }
+      //read(fd[0], &location, sizeof(location));
+      
+      if (argc==2){
+	execl(location, argv[1],0,0);
+      }
+    printf("%s\n", argv[1]);
+    if ((argc >= 3) && strcmp(argv[1],"echo")){
+      execl(location, "echo this", 0, 0);
+      printf("Sorry this program can only tolerate up to 3 arguments\n");
+    }
+    close(fd[0]);
+      }
+  
+  
+else {
+    printf("parent process\n");
+    printf("Process ID:%d \n", getppid()); 
+    strcat(location, argv[1]);
+    cmd=argv[1];
+    close(fd[0]);
+    write(fd[1], &location, sizeof(location));
+    write(fd[1], &cmd, sizeof(cmd));
+    close(fd[1]);
+    
+    //exit(0);
+  }
+
+}

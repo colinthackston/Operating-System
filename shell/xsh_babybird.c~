@@ -1,0 +1,133 @@
+/*
+Author- Colin Thackston
+Created on- 9/24/2016 16:50
+Last modified by- Colin Thackston
+Last modified on- 9/27/2016 16:31
+Part of- P436 assignment 3
+ */
+
+#include <xinu.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <ctype.h>
+
+void baby_bird(mutex_t *my_mutex, cond_t *worms, int babybird_worms);
+
+int birds=0;
+int worms_to_eat=0;
+int to_fetch=0;
+int counter=1; //global counter
+int counting_sem=0;
+
+shellcmd xsh_babybird(int nargs, char *args[]){
+  counter=1;
+  while(counter<nargs){
+    if (!strcmp(args[counter], "--babies") || !strcmp(args[counter], "-b")){
+      //baby bird (number of processes)
+      birds=atoi(args[counter+1]);
+      printf("number of birds: %d\n", birds);
+      counter=counter+2;
+      continue;
+    }
+    
+    if (!strcmp(args[counter], "--fetch") || !strcmp(args[counter], "-f")){
+      //number of words mother fetches
+      to_fetch=atoi(args[counter+1]);
+      printf("number of worms to fetch: %d\n", to_fetch);
+      counter=counter+2;
+      continue;
+    }
+    
+    if (!strcmp(args[counter], "--eat") || !strcmp(args[counter], "-e")){
+      //number of worms eat bird has to eat
+      worms_to_eat=atoi(args[counter+1]);
+      printf("number of worms to eat: %d\n", worms_to_eat);
+      counter=counter+2;
+      continue;
+    }
+
+    //prints help menu
+    if(!strcmp(args[counter], "--help") || !strcmp(args[counter], "-h")){
+      printf("help menu\n ------------------------------\n");
+      printf("here is a list of recognized commands\n");
+      printf("--babies or -b : enter the number of baby birds\n");
+      printf("--fetch or -f : enter the number of worms the mommy fetches\n");
+      printf("--eat or -e: the number of worms each bird will eat\n");
+      return 1;
+    }//end of help
+    
+    else{
+      printf("%s is not a valid command\n type help to see a list of valid commands\n", args[counter]); 
+      counter++; 
+      return;}
+    
+
+    counter++;
+  }
+
+  printf("end of shell part\n");
+  //begining of process creation
+  mutex_t mutex;
+  cond_t condition_variable;
+  mutex_create(mutex);
+  cond_init(condition_variable);
+
+  //create mom
+  //pause mom after dish is filled
+
+  int i;
+  for(i=0;i<birds;i++){
+    //create birds here
+    resume(create(baby_bird,1024,20,"1",3,mutex,condition_variable,worms_to_eat));
+    sleepms(1);
+  }
+  //birds eating here
+  while(condition_variable>0){
+    condition_variable--;
+    if(counting_sem==birds){
+      
+    }
+    
+  }
+
+}
+
+void mom_process(cond_t *worms){
+  while(1){
+    cond_wait(worms);
+    if (worms == 0){ //if bowl is empty, fill it with worms
+      *worms==to_fetch;
+    }
+    else{ //else, busy wait
+      //cond_wait(worms);
+    }
+  }
+}
+  
+void baby_bird(mutex_t *my_mutex, cond_t *worms, int babybird_worms){
+  int has_eaten=0;
+  int total_food=0;
+  
+ 
+  while(total_food<babybird_worms){
+    cond_wait(worms, my_mutex);
+    if(!has_eaten){
+      printf("hello world\n");
+      *worms=worms-1;
+      //has_eaten=1;
+      total_food++;
+      counting_sem++; //increment counting semaphore
+      cond_signal(*worms);
+      printf("goodbye world\n");
+    }
+
+    //if every bird has eaten, then signal that birds can eat again
+    if(counting_sem==birds){ 
+      has_eaten=0;
+    }
+    else{
+      //loop
+    }
+  }
+}

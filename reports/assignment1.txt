@@ -1,0 +1,12 @@
+Colin Thackston
+cojthack
+Assingment1 report
+
+1. What are Orphan and Zombie processes?
+   orphan- this process is still executing, but the parent process has died 
+   zombie- a zombie process is a process that has completed execution, but is
+   still an entry in the process table. The kill command has no effect on these.
+   
+2. When a child process calls exec, it replaces the current running process with
+the newly called process. It actually replaces the current address space with the
+new one. 

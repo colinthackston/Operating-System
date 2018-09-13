@@ -1,0 +1,6 @@
+#include <xinu.h>
+#include <mutex.h>
+
+syscall cond_signal(cond_t *cv){
+  *cv=0;
+}

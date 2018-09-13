@@ -1,0 +1,8 @@
+Futures assignment
+Colin Thackston
+Eric James
+
+We worked together on this assignment trying to implement futures in xinu. In summary,
+we could not fully implement futures. We did created a future table modeled off of
+the way xinu handles semaphores (see intialize.c in /system). This required us
+to edit the future typedef 

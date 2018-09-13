@@ -1,0 +1,19 @@
+/* mutex_create.c - creates a mutex */
+
+#include <xinu.h>
+#include <mutex.h>
+
+/*------------------------------------------------------------------------
+ *  mutex_create -  creates a mutex and locks it initially
+ *------------------------------------------------------------------------
+ */
+
+syscall mutex_create(
+		     mutex_t *lock //name of mutex
+		     )
+{
+  
+
+  return OK;
+}
+  

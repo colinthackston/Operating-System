@@ -1,0 +1,19 @@
+/*
+Author- Colin Thackston
+Created on- 12/1/2017 17:37
+Last modified by- Colin Thackston
+Last modified on-
+Part of- P436 assignment 6
+ */
+
+#include <xinu.h>
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <ctype.h>
+
+shellcmd xsh_stack(){
+
+}
+
+void
